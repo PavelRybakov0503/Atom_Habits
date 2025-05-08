@@ -1,6 +1,7 @@
 from django.db import models
+from rest_framework.exceptions import ValidationError
 
-from config import settings
+from users.models import User
 
 NULLABLE = {'null': True, 'blank': True}
 
@@ -23,69 +24,54 @@ class Habit(models.Model):
         ('Monthly', 'Eжемесячно')
     )
 
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        verbose_name='пользователь',
-        **NULLABLE
-    )
-    place = models.CharField(max_length=255, verbose_name='место')
-    time = models.TimeField(verbose_name='время, когда необходимо выполнять')
-    action = models.CharField(max_length=255, verbose_name='действие')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', **NULLABLE,
+                             help_text='Пользователь - создатель привычки')
+    place = models.CharField(max_length=255, verbose_name='место',
+                             help_text='Место — место, в котором необходимо выполнять привычку.')
+    time = models.TimeField(verbose_name='время, когда необходимо выполнять',
+                            help_text='Время — время, когда необходимо выполнять привычку.')
+    action = models.TextField(max_length=255, verbose_name='действие',
+                              help_text='Действие — действие, которое, представляет из себя, привычка.')
+    pleasant_habit = models.BooleanField(default=False, verbose_name='Признак приятной привычки',
+                                         help_text='Признак приятной привычки — привычка, '
+                                                   'которую можно привязать к выполнению полезной привычки.')
+    related_habit = models.ForeignKey('self', on_delete=models.SET_NULL, verbose_name='Связанная привычка',
+                                      **NULLABLE,
+                                      help_text='Связанная привычка — привычка, которая связана с другой привычкой, '
+                                                'важно указывать для полезных привычек, но не для приятных.')
     regularity = models.CharField(
         max_length=7,
         choices=REGULARITY_CHOICES,
         default='Daily',
         verbose_name='периодичность'
     )
+    reward = models.TextField(verbose_name='Вознаграждение за выполнение действия', **NULLABLE,
+                              help_text='Вознаграждение — чем пользователь должен себя вознаградить после выполнения.')
     time_required = models.IntegerField(verbose_name='время на выполнение')
     is_public = models.BooleanField(
         default=False,
         verbose_name='признак публичности'
     )
 
-    def str(self):
-        """
-        Возвращает строковое представление привычки.
+    def __str__(self):
+        if self.reward:
+            reward = self.reward
+        elif self.related_habit:
+            reward = self.related_habit.action
+        else:
+            reward = 'Ты - свой самый лучший проект'
+        return f'Я буду делать {self.action} в {self.time}, ' \
+               f'\nместо: {self.place}' \
+               f'\nНаграда: {reward}'
 
-        Returns:
-            str: Описание действия привычки.
-        """
-        return f'{self.action}'
+    def save(self, *args, **kwargs):
+        """ Проверки выполнения привычки (должно быть не более 120 секунд) """
 
-
-class PleasantHabit(Habit):
-    """
-    Модель PleasantHabit описывает приятные привычки пользователя.
-
-    Наследует все поля базовой модели Habit.
-
-    Используется для обозначения привычек, доставляющих пользователю удовольствие.
-    """
-    class Meta:
-        verbose_name = 'Приятная привычка'
-        verbose_name_plural = 'Приятные привычки'
-
-
-class HealthyHabit(Habit):
-    """
-    Модель HealthyHabit описывает полезные привычки пользователя.
-
-    Атрибуты (дополнительно к Habit):
-        related_habit (ForeignKey): Ссылка на связанную приятную привычку.
-        reward (CharField): Описание вознаграждения за выполнение полезной привычки.
-    """
-    related_habit = models.ForeignKey(
-        PleasantHabit,
-        on_delete=models.SET_NULL, **NULLABLE,
-        verbose_name='связанная привычка'
-    )
-    reward = models.CharField(
-        max_length=255,
-        verbose_name='награда',
-        **NULLABLE
-    )
+        if self.time_to_complete and self.time_to_complete > 120:
+            raise ValidationError('Время выполнения привычки должно быть больше 0 и меньше 120 секунд!')
+        return super().save(**kwargs)
 
     class Meta:
-        verbose_name = 'Полезная привычка'
-        verbose_name_plural = 'Полезные привычки'
+        verbose_name = 'Привычка'
+        verbose_name_plural = 'Привычки'
+        ordering = ('pk',)

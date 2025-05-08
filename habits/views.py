@@ -2,8 +2,6 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from drf_spectacular.utils import extend_schema
-
-from habits.models import HealthyHabit, PleasantHabit, Habit
 from habits.paginators import HabitPaginator
 from habits.permissions import IsOwner
 from habits.serializers import (HealthyHabitSerializer, PleasantHabitSerializer,
@@ -40,15 +38,8 @@ class ListHealthyHabitApiView(generics.ListAPIView):
     Используется пагинация.
     """
     serializer_class = HealthyHabitSerializer
-    queryset = HealthyHabit.objects.all()
     pagination_class = HabitPaginator
     permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        """
-        Возвращает только полезные привычки текущего пользователя.
-        """
-        return PleasantHabit.objects.filter(user=self.request.user).order_by('pk')
 
 
 @extend_schema(summary="Просмотреть полезную привычку.")

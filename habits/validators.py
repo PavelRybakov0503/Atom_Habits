@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+
 class ValidateReward:
     """
     Валидатор для проверки полей награды (reward) и связанной приятной привычки (related_habit).
@@ -34,6 +35,7 @@ class ValidateReward:
                 'Нужно указать только награду или только приятную привычку, но не оба варианта.'
             )
 
+
 class ValidateRewardForUpdate(ValidateReward):
     """
     Валидатор для проверки обновления полей награды и связанной привычки.
@@ -51,6 +53,7 @@ class ValidateRewardForUpdate(ValidateReward):
             raise serializers.ValidationError(
                 'Нужно указать только награду или только приятную привычку, но не оба варианта.'
             )
+
 
 class ValidateTimeRequired:
     """
