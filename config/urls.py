@@ -21,7 +21,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     # Другие URL-шаблоны вашего проекта...
     path('admin/', admin.site.urls),
-    path('', include('app_habits.urls', namespace='habits')),
+    path('', include('Atom_Habits.urls', namespace='habits')),
     path('users/', include('users.urls', namespace='users')),
 
     # Документация drf_yasg
