@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -99,9 +100,29 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+AUTH_USER_MODEL = "users.User"
+
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/1",
     }
 }
+
+# Телеграм
+TELEGRAM_URL_BOT = 'https://api.telegram.org/bot'
+TELEGRAM_API_TOKEN = os.getenv('TELEGRAM_API_TOKEN')  # Тут Ваш токен, который выдал - BotFather
+
+# URL-адрес брокера результатов, также Redis
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+
+# Настройки для выполнения периодических задач
+CELERY_BEAT_SCHEDULE = {
+    'check_user_habits_and_send': {
+        'task': 'habits.tasks.check_user_habits_and_send',  # Путь к задаче
+        'schedule': timedelta(minutes=1),  # Расписание выполнения задачи (например, каждые 10 минут)
+    },
+}
+

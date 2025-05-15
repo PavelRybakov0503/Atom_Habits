@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from habits.models import HealthyHabit, PleasantHabit, Habit
 from habits.validators import ValidateReward, ValidateTimeRequired, ValidateRewardForUpdate
@@ -114,3 +115,18 @@ class PublicHabitsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Habit
         fields = "all"
+
+
+class PeriodicityValidator:
+    """Исключает выбор периодичности привычки, которая превышает 7 дней"""
+
+    def __init__(self, field1):
+        self.field1 = field1
+
+    def __call__(self, instance):
+        periodicity = instance.get(self.field1)
+        if periodicity:
+            if periodicity > 7:
+                raise ValidationError(
+                    "Нельзя выполнять привычку реже, чем 1 раз в 7 дней."
+                )

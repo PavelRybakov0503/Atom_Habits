@@ -2,6 +2,8 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from drf_spectacular.utils import extend_schema
+
+from habits.models import Habit
 from habits.paginators import HabitPaginator
 from habits.permissions import IsOwner
 from habits.serializers import (HealthyHabitSerializer, PleasantHabitSerializer,
@@ -50,7 +52,7 @@ class RetrieveHealthyHabitApiView(generics.RetrieveAPIView):
     Доступно только для владельца привычки.
     """
     serializer_class = HealthyHabitSerializer
-    queryset = HealthyHabit.objects.all()
+    queryset = Habit.objects.all()
     permission_classes = [IsAuthenticated, IsOwner]
 
 
@@ -62,7 +64,7 @@ class UpdateHealthyHabitApiView(generics.UpdateAPIView):
     Доступно только для владельца привычки.
     """
     serializer_class = UpdateHealthyHabitSerializer
-    queryset = HealthyHabit.objects.all()
+    queryset = Habit.objects.all()
     permission_classes = [IsAuthenticated, IsOwner]
 
 
@@ -73,7 +75,7 @@ class DestroyHealthyHabitApiView(generics.DestroyAPIView):
 
     Доступно только для владельца привычки.
     """
-    queryset = HealthyHabit.objects.all()
+    queryset = Habit.objects.all()
     permission_classes = [IsAuthenticated, IsOwner]
 
 
@@ -107,7 +109,7 @@ class ListPleasantHabitApiView(generics.ListAPIView):
     Используется пагинация.
     """
     serializer_class = PleasantHabitSerializer
-    queryset = PleasantHabit.objects.all()
+    queryset = Habit.objects.all()
 
     pagination_class = HabitPaginator
     permission_classes = [IsAuthenticated]
@@ -116,7 +118,7 @@ class ListPleasantHabitApiView(generics.ListAPIView):
         """
         Возвращает только приятные привычки текущего пользователя.
         """
-        return PleasantHabit.objects.filter(user=self.request.user).order_by('pk')
+        return Habit.objects.filter(user=self.request.user).order_by('pk')
 
 
 @extend_schema(summary="Просмотреть приятную привычку.")
@@ -127,7 +129,7 @@ class RetrievePleasantHabitApiView(generics.RetrieveAPIView):
     Доступно только для владельца привычки.
     """
     serializer_class = PleasantHabitSerializer
-    queryset = PleasantHabit.objects.all()
+    queryset = Habit.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsOwner]
 
@@ -140,7 +142,7 @@ class UpdatePleasantHabitApiView(generics.UpdateAPIView):
     Доступно только для владельца привычки.
     """
     serializer_class = PleasantHabitSerializer
-    queryset = PleasantHabit.objects.all()
+    queryset = Habit.objects.all()
     permission_classes = [IsAuthenticated, IsOwner]
 
 
@@ -151,7 +153,7 @@ class DestroyPleasantHabitApiView(generics.DestroyAPIView):
 
     Доступно только для владельца привычки.
     """
-    queryset = PleasantHabit.objects.all()
+    queryset = Habit.objects.all()
     permission_classes = [IsAuthenticated, IsOwner]
 
 
