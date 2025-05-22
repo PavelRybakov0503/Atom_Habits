@@ -1,39 +1,30 @@
 from rest_framework import generics
+from rest_framework.permissions import AllowAny
 
-from rest_framework_simplejwt.views import TokenObtainPairView
-
-from drf_spectacular.utils import extend_schema
-
-from users.serializers import RegistrationSerializer
+from users.models import User
+from users.serializers import UserSerializer
 
 
-@extend_schema(summary="Зарегистрироваться.")
-class RegistrationApiView(generics.CreateAPIView):
-    """
-    Представление для регистрации нового пользователя.
-
-    Позволяет создать нового пользователя с использованием сериализатора RegistrationSerializer.
-    """
-
-    serializer_class = RegistrationSerializer
+class UserCreateAPIView(generics.CreateAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
 
     def perform_create(self, serializer):
-        """
-        Сохраняет нового пользователя и устанавливает ему пароль.
-
-        Аргументы:
-            serializer: Сериализатор данных пользователя.
-        """
-        new_user = serializer.save()
-        new_user.set_password(new_user.password)
-        new_user.save()
+        user = serializer.save(is_active=True)
+        user.set_password(user.password)
+        user.save()
 
 
-@extend_schema(summary="Войти.")
-class AuthApiView(TokenObtainPairView):
-    """
-    Представление для аутентификации пользователя.
+class UserRetrieveAPIView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
 
-    Использует стандартную реализацию JWT-аутентификации.
-    """
-    pass
+
+class UserUpdateAPIView(generics.UpdateAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+
+
+class UserDestroyAPIView(generics.DestroyAPIView):
+    queryset = User.objects.all()

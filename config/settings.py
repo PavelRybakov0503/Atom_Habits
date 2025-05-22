@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -12,7 +13,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = True if os.getenv("DEBUG") else False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -22,8 +23,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework_simplejwt",
     "django_filters",
+    "django_celery_beat",
     "drf_yasg",
+    "users",
+    "habits",
 ]
 
 MIDDLEWARE = [
@@ -56,22 +61,32 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 REST_FRAMEWORK = {
-    "DEFAULT_FILTER_BACKENDS": (
-        "django_filters.rest_framework.DjangoFilterBackend",
-        # '...' замените на ваши фильтры, если есть
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
 }
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.getenv("NAME"),
-        "USER": os.getenv("USER"),
-        "PASSWORD": os.getenv("PASSWORD"),
-        "HOST": os.getenv("HOST"),
-        "PORT": os.getenv("PORT"),
+if "test" in sys.argv:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "test_db.sqlite3"),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("POSTGRES_DB"),
+            "USER": os.getenv("POSTGRES_USER"),
+            "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+            "HOST": os.getenv("POSTGRES_HOST"),
+            "PORT": os.getenv("POSTGRES_PORT"),
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -97,10 +112,36 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.User"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",  # Замените на адрес вашего фронтенд-сервера
+]
+
+CORS_ALLOW_ALL_ORIGINS = False
+
 
 CACHES = {
     "default": {
@@ -110,6 +151,7 @@ CACHES = {
 }
 
 # Телеграм
+TG_BOT_TOKEN = os.getenv("TG_BOT_TOKEN")
 TELEGRAM_URL_BOT = 'https://api.telegram.org/bot'
 TELEGRAM_API_TOKEN = os.getenv('TELEGRAM_API_TOKEN')  # Тут Ваш токен, который выдал - BotFather
 
@@ -125,4 +167,3 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': timedelta(minutes=1),  # Расписание выполнения задачи (например, каждые 10 минут)
     },
 }
-
