@@ -1,6 +1,8 @@
 services:
   app:
-    image: pavelrybakov1982/app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     command: sh -c "python manage.py collectstatic --no-input && python manage.py migrate && gunicorn config.wsgi:application --bind 0.0.0.0:8000"
 
     volumes:
@@ -14,7 +16,8 @@ services:
       - .env
 
   nginx:
-    image: pavelrybakov1982/nginx:latest
+    build:
+      context: ./nginx
     ports:
       - "80:80"
     volumes:
@@ -42,7 +45,7 @@ services:
       - "6379"
 
   celery:
-    image: pavelrybakov1982/celery:latest
+    build: .
     command:
       bash -c "celery -A config worker --loglevel=info"
     restart: on-failure
@@ -55,7 +58,7 @@ services:
       - .env
 
   celery-beat:
-    image: pavelrybakov1982/celery-beat:latest
+    build: .
     command:
       bash -c "celery -A config beat --loglevel=info"
     restart: on-failure
