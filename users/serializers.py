@@ -1,10 +1,15 @@
 from rest_framework import serializers
-from users.models import User
+
+from .models import User
 
 
-class RegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(min_length=8)
-
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['email', 'password', 'telegram']
+        exclude = (
+            "password",
+            "is_superuser",
+            "is_staff",
+            "groups",
+            "user_permissions",
+        )

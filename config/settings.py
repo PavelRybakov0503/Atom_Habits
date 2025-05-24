@@ -15,6 +15,8 @@ DEBUG = True if os.getenv("DEBUG") else False
 
 ALLOWED_HOSTS = ["*"]
 
+# это чтобы попал в репо
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -156,11 +158,6 @@ TG_BOT_TOKEN = os.getenv("TG_BOT_TOKEN")
 TELEGRAM_URL_BOT = 'https://api.telegram.org/bot'
 TELEGRAM_API_TOKEN = os.getenv('TELEGRAM_API_TOKEN')  # Тут Ваш токен, который выдал - BotFather
 
-# URL-адрес брокера результатов, также Redis
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
-
 # Настройки для выполнения периодических задач
 CELERY_BEAT_SCHEDULE = {
     'check_user_habits_and_send': {
@@ -168,3 +165,10 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': timedelta(minutes=1),  # Расписание выполнения задачи (например, каждые 10 минут)
     },
 }
+
+# URL-адрес брокера результатов, также Redis
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+
+

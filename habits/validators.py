@@ -1,85 +1,78 @@
-from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 
-class ValidateReward:
-    """
-    Валидатор для проверки полей награды (reward) и связанной приятной привычки (related_habit).
+class AssociatedWithoutRewardValidator:
+    """Исключает одновременный выбор связанной привычки и указания вознаграждения"""
 
-    Проверяет, что заполнено только одно из полей: либо награда, либо связанная привычка,
-    но не оба варианта одновременно и не оба пустые.
-    """
+    def __init__(self, field1, field2):
+        self.field1 = field1
+        self.field2 = field2
 
-    def init(self, reward, related_habit):
-        """
-        Инициализирует валидатор с названиями полей для награды и связанной привычки.
-
-        Аргументы
-        - reward: название поля для награды
-        - related_habit: название поля для связанной приятной привычки
-        """
-        self.reward = reward
-        self.related_habit = related_habit
-
-    def call(self, value):
-        """
-        Выполняет валидацию данных.
-
-        Проверяет, что заполнено только одно из полей: reward или related_habit.
-        """
-        reward = dict(value).get(self.reward)
-        related_habit = dict(value).get(self.related_habit)
-        if reward is None and related_habit is None:
-            raise serializers.ValidationError('Нужно указать награду или приятную привычку')
-        elif reward and related_habit:
-            raise serializers.ValidationError(
-                'Нужно указать только награду или только приятную привычку, но не оба варианта.'
+    def __call__(self, instance):
+        if instance.get(self.field1) and instance.get(self.field2):
+            raise ValidationError(
+                "Выбрана связанная привычка и указано вознаграждение."
+                "Укажите либо связанную привычку, либо укажите вознаграждение."
             )
 
 
-class ValidateRewardForUpdate(ValidateReward):
-    """
-    Валидатор для проверки обновления полей награды и связанной привычки.
+class TimeToCompleteValidator:
+    """Исключает выбор времени на выполнение привычки, которое превышает 120 секунд"""
 
-    Не позволяет указывать оба поля одновременно при обновлении объекта.
-    """
+    duration = 120
 
-    def call(self, value):
-        """
-        Выполняет валидацию данных для обновления.
+    def __init__(self, field1):
+        self.field1 = field1
 
-        Запрещает одновременное указание полей reward и related_habit.
-        """
-        if 'reward' in dict(value) and 'related_habit' in dict(value):
-            raise serializers.ValidationError(
-                'Нужно указать только награду или только приятную привычку, но не оба варианта.'
-            )
+    def __call__(self, instance):
+        if instance.get(self.field1):
+            if instance.get(self.field1) > self.duration:
+                raise ValidationError(
+                    "Указанное время на выполнение привычки превышает 120 секунд."
+                )
 
 
-class ValidateTimeRequired:
-    """
-    Валидатор для проверки времени, необходимого для выполнения привычки.
+class PleasantHabitRelatedValidator:
+    """В связанные привычки могут попадать только привычки с признаком приятной привычки."""
 
-    Не допускает значение больше 120 секунд.
-    """
+    def __init__(self, field1, field2):
+        self.field1 = field1
+        self.field2 = field2
 
-    def init(self, time_required):
-        """
-        Инициализирует валидатор с названием поля времени.
+    def __call__(self, instance):
+        if instance.get(self.field1):
+            if not instance.get(self.field2):
+                raise ValidationError(
+                    "У связанной привычки должен быть указан признак приятной привычки."
+                )
 
-        Аргументы
-        - time_required: название поля для времени выполнения
-        """
-        self.time_required = time_required
 
-    def call(self, value):
-        """
-        Выполняет валидацию значения времени.
+class PleasantHabitWithoutReward:
+    """Исключает одновременный выбор связанной привычки и указания вознаграждения"""
 
-        Генерирует ошибку, если время превышает 120 секунд.
-        """
-        if 'time_required' in dict(value):
-            time_required = dict(value).get(self.time_required)
-            if time_required > 120:
-                raise serializers.ValidationError(
-                    'Время для выполнения привычки не может быть больше 120 секунд'
+    def __init__(self, field1, field2, field3):
+        self.field1 = field1
+        self.field2 = field2
+        self.field3 = field3
+
+    def __call__(self, instance):
+        if instance.get(self.field1):
+            if instance.get(self.field2) or instance.get(self.field3):
+                raise ValidationError(
+                    "У приятной привычки не может быть вознаграждения или связанной привычки."
+                )
+
+
+class PeriodicityValidator:
+    """Исключает выбор периодичности привычки, которая превышает 7 дней"""
+
+    def __init__(self, field1):
+        self.field1 = field1
+
+    def __call__(self, instance):
+        periodicity = instance.get(self.field1)
+        if periodicity:
+            if periodicity > 7:
+                raise ValidationError(
+                    "Нельзя выполнять привычку реже, чем 1 раз в 7 дней."
                 )
