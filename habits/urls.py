@@ -8,7 +8,7 @@ from habits.views import (
     HabitUpdateAPIView,
     HabitDestroyAPIView,
     PublishedHabitListAPIView,
-                          )
+)
 
 app_name = HabitsConfig.name
 
