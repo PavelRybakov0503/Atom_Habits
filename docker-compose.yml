@@ -1,10 +1,10 @@
 services:
   app:
-    image: pavelrybakov1982/atom_habits: latest
+    image: atom_habits-app:latest
+    build:
       context: .
       dockerfile: Dockerfile
     command: sh -c "python manage.py collectstatic --no-input && python manage.py migrate && gunicorn config.wsgi:application --bind 0.0.0.0:8000"
-
     volumes:
       - static_volume:/app/staticfiles
     expose:
@@ -16,7 +16,8 @@ services:
       - .env
 
   nginx:
-    image: pavelrybakov1982/atom_habits: latest
+    image: atom_habits-nginx:latest
+    build:
       context: ./nginx
     ports:
       - "80:80"
@@ -45,9 +46,8 @@ services:
       - "6379"
 
   celery:
-    image: pavelrybakov1982/atom_habits: latest
-    command:
-      bash -c "celery -A config worker --loglevel=info"
+    image: atom_habits-celery:latest
+    command: bash -c "celery -A config worker --loglevel=info"
     restart: on-failure
     volumes:
       - .:/app
@@ -58,9 +58,8 @@ services:
       - .env
 
   celery-beat:
-    image:pavelrybakov1982/atom_habits: latest
-    command:
-      bash -c "celery -A config beat --loglevel=info"
+    image: atom_habits-celery-beat:latest
+    command: bash -c "celery -A config beat --loglevel=info"
     restart: on-failure
     volumes:
       - .:/app
