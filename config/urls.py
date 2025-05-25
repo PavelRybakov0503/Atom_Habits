@@ -19,16 +19,29 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    # Другие URL-шаблоны вашего проекта...
-    path('admin/', admin.site.urls),
-    path('', include('habits.urls', namespace='habits')),
-    path('users/', include('users.urls', namespace='users')),
-
-    # Документация drf_yasg
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-
-    # Документация drf_spectacular
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path("admin/", admin.site.urls),
+    path("habits/", include("habits.urls", namespace="habits")),
+    path("users/", include("users.urls", namespace="users")),
+    path(
+        "swagger<format>/", schema_view.without_ui(cache_timeout=0), name="schema-json"
+    ),
+    path(
+        "swagger/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
 ]
+#     # Другие URL-шаблоны вашего проекта...
+#     path('admin/', admin.site.urls),
+#     path('', include('habits.urls', namespace='habits')),
+#     path('users/', include('users.urls', namespace='users')),
+#
+#     # Документация drf_yasg
+#     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+#     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+#
+#     # Документация drf_spectacular
+#     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
+#     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+# ]
