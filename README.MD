@@ -14,7 +14,7 @@
 * Клонируйте репозиторий
 
 ```bash
-  https://github.com/PavelRybakov0503/DjangoDRF
+  https://github.com/PavelRybakov0503/Atom_Habits
   ```
 
 * Установите зависимости
@@ -34,7 +34,7 @@
 * Клонируйте репозиторий
 
 ```bash
-  https://github.com/PavelRybakov0503/DjangoDRF
+  https://github.com/PavelRybakov0503/Atom_Habits
   ```
 
 * Установите зависимости
