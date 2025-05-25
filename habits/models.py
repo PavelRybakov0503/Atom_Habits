@@ -10,7 +10,7 @@ class Habit(models.Model):
         User, on_delete=models.CASCADE, related_name="users", **NULLABLE
     )
     place = models.CharField(
-        max_length=100,
+        max_length=99,
         verbose_name="Место",
         help_text="Укажите место, в котором необходимо выполнять привычку",
     )

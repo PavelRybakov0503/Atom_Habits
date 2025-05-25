@@ -15,8 +15,6 @@ DEBUG = True if os.getenv("DEBUG") else False
 
 ALLOWED_HOSTS = ["*"]
 
-# это чтобы попал в репо
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -170,5 +168,3 @@ CELERY_BEAT_SCHEDULE = {
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 
 CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
-
-
