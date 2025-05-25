@@ -1,6 +1,6 @@
 services:
   app:
-    build:
+    image:
       context: .
       dockerfile: Dockerfile
     command: sh -c "python manage.py collectstatic --no-input && python manage.py migrate && gunicorn config.wsgi:application --bind 0.0.0.0:8000"
@@ -16,7 +16,7 @@ services:
       - .env
 
   nginx:
-    build:
+    image:
       context: ./nginx
     ports:
       - "80:80"
@@ -45,7 +45,7 @@ services:
       - "6379"
 
   celery:
-    build: .
+    image: .
     command:
       bash -c "celery -A config worker --loglevel=info"
     restart: on-failure
@@ -58,7 +58,7 @@ services:
       - .env
 
   celery-beat:
-    build: .
+    image: .
     command:
       bash -c "celery -A config beat --loglevel=info"
     restart: on-failure
