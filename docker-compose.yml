@@ -24,7 +24,7 @@ services:
       - app
 
   db:
-    image: pavelrybakov1982/postgres:latest
+    image: postgres:17
     env_file:
       - .env
     volumes:
