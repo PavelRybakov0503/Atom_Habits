@@ -1,6 +1,6 @@
 services:
   app:
-    image: atom_habits-app:latest
+    image: pavelrybakov1982/atom_habits-app:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -16,7 +16,7 @@ services:
       - .env
 
   nginx:
-    image: atom_habits-nginx:latest
+    image: pavelrybakov1982/nginx:latest
     build:
       context: ./nginx
     ports:
@@ -46,7 +46,7 @@ services:
       - "6379"
 
   celery:
-    image: atom_habits-celery:latest
+    image: pavelrybakov1982/celery:latest
     command: bash -c "celery -A config worker --loglevel=info"
     restart: on-failure
     volumes:
@@ -58,7 +58,7 @@ services:
       - .env
 
   celery-beat:
-    image: atom_habits-celery-beat:latest
+    image: pavelrybakov1982/celery-beat:latest
     command: bash -c "celery -A config beat --loglevel=info"
     restart: on-failure
     volumes:
