@@ -24,6 +24,8 @@ jobs:
         run: flake8 .
 
       - name: Run Server
+        env:
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         run: python manage.py runserver --noreload
 
   tests:
