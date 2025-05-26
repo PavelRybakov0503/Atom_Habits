@@ -24,7 +24,7 @@ jobs:
         run: flake8 .
 
       - name: Run Server
-        run: python manage.py runserver
+        run: python manage.py runserver --noreload
 
   tests:
     needs: lint
