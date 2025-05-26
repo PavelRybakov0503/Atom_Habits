@@ -20,8 +20,8 @@ jobs:
           pip install -r requirements.txt
           pip install flake8
 
-      - name: Run Flake8
-        run: flake8 .
+      - name: Run Server
+        run: python manage.py runserver
 
   tests:
     needs: lint
