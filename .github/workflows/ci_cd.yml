@@ -23,11 +23,6 @@ jobs:
       - name: Run Flake8
         run: flake8 .
 
-      - name: Run Server
-        env:
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        run: python manage.py runserver --noreload
-
   tests:
     needs: lint
     runs-on: ubuntu-latest
