@@ -25,7 +25,7 @@ jobs:
 
       - name: Run Server
         env:
-          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: python manage.py runserver --noreload
 
   tests:
