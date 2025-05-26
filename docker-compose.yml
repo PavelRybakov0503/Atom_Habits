@@ -24,7 +24,7 @@ services:
       - app
 
   db:
-    image: postgres:17
+    image: atom_habits-db-1:17
     env_file:
       - .env
     volumes:
