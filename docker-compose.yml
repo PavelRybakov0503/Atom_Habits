@@ -14,8 +14,6 @@ services:
 
   nginx:
     image: pavelrybakov1982/nginx:latest
-    build:
-      context: ./nginx
     ports:
       - "80:80"
     volumes:
