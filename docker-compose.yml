@@ -17,7 +17,7 @@ services:
       context: ./nginx
     # image: pavelrybakov1982/nginx:latest
     ports:
-      - "80:80"
+      - "8000:8000"
     volumes:
       - static_volume:/app/staticfiles
     depends_on:
