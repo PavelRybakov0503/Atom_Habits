@@ -13,9 +13,9 @@ services:
       - .env
 
   nginx:
-#    build:
-#      context: ./nginx
     image: atom_habits-nginx
+    build:
+      context: ./nginx
     ports:
       - "8000:8000"
     volumes:
