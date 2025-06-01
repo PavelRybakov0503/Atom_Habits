@@ -15,7 +15,7 @@ services:
   nginx:
     image: atom_habits-nginx
     build:
-      context: ./nginx
+      context: D:\py\Atom_Habits\nginx\
     ports:
       - "8000:8000"
     volumes:
