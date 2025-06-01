@@ -15,11 +15,11 @@ services:
   nginx:
     image: atom_habits-nginx
     build:
-      context: D:\py\Atom_Habits\nginx\
+      context: ./nginx
     ports:
       - "8000:8000"
     volumes:
-      - static_volume:/app/staticfiles
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - app
 
