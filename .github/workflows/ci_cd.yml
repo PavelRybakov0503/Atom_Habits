@@ -59,14 +59,14 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/atom_habits-app:latest .
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/nginx: nginx/.
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/nginx: stable-alpine nginx/.
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/celery:latest .
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/celery-beat:latest .
 
       - name: Push Docker image to Docker Hub
         run: |
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/atom_habits-app:latest
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/nginx:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/nginx:stable-alpine
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/celery:latest
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/celery-beat:latest
 
