@@ -13,7 +13,7 @@ services:
       - .env
 
   nginx:
-    image: nginx
+    image: nginx:stable-alpine
     build:
       context: ./nginx
     ports:
