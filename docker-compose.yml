@@ -14,8 +14,6 @@ services:
 
   nginx:
     image: nginx:stable-alpine
-    build:
-      context: ./nginx
     ports:
       - "8000:8000"
     volumes:
